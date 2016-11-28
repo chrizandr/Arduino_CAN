@@ -1,10 +1,17 @@
 // demo: CAN-BUS Shield, send data
 #include <mcp_can.h>
 #include <SPI.h>
+#include <DHT.h>
 
 MCP_CAN CAN0(10);                                      // Set CS to pin 10
 unsigned char pixels[1024];
 unsigned char temp[8] = {0,0,0,0,0,0,0,0};
+#define DHTPIN 2
+#define DHTTYPE DHT22   // DHT 22  (AM2302)
+DHT dht(DHTPIN, DHTTYPE);
+int chk;
+float hum;
+
 void setup()
 {
   Serial.begin(115200);
@@ -20,15 +27,14 @@ void sendCan(){
       Serial.print(temp[j]);
       Serial.print(" ");
       count ++;
-    }  
+    }
     Serial.println();
-   
     CAN0.sendMsgBuf(0x10, 0, 8, temp);
   }
+  delay(5);
 }
 
-
-
+int flag = 0;
 void loop()
 {
   // send data:  id = 0x00, standrad flame, data len = 8, stmp: data buf
@@ -36,10 +42,24 @@ void loop()
     // read the incoming byte:
     int c = Serial.readBytes(pixels,1024);
     Serial.println(c);
-    sendCan(); 
+    sendCan();
     Serial.println(count);
+    flag = 1;
    }
-   
+   delay(100);
+   if(flag == 1){
+    for(int i=0;i<8;i++){
+           hum = dht.readHumidity();
+           //Serial.println(hum);
+           if(hum>60){
+             temp[i]='2';
+           }
+           else{
+             temp[i]='0';
+           }
+    }
+   CAN0.sendMsgBuf(0x10, 0, 8, temp);      
+   }
 }
 
 /*********************************************************************************************************

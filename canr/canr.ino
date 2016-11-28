@@ -1,11 +1,7 @@
 // demo: CAN-BUS Shield, receive data
 #include <mcp_can.h>
 #include <SPI.h>
-#include <Servo.h>
 
-Servo myservo;
-
-int servoPin = 3;
 long unsigned int rxId;
 unsigned char len = 0;
 unsigned char rxBuf[8];
@@ -17,9 +13,9 @@ void setup()
 {
   Serial.begin(115200);
   CAN0.begin(CAN_125KBPS,MCP_8MHz);                       // init can bus : baudrate = 500k 
-  pinMode(2, INPUT);                            // Setting pin 2 for /INT input
+  pinMode(2, INPUT);   // Setting pin 2 for /INT input
+  pinMode(5,OUTPUT);
   Serial.println("MCP2515 Library Receive Example...");
-  myservo.attach(servoPin);
 }
 
 void loop()
@@ -42,14 +38,15 @@ void loop()
       }
       for(int i=0;i<8;i++){
         Serial.println(int(rxBuf[i]));
-        if(int(rxBuf[i])==50 && rxId==0){
-          myservo.write(90);
+        if(int(rxBuf[i])==50){
+          
           Serial.println("enter");
+          digitalWrite(5,HIGH);
           delay(1000);
           break;
         }
       }
-      myservo.write(0);
+      digitalWrite(5,LOW);
       delay(1000);
       Serial.println();
     }

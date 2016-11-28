@@ -36,7 +36,7 @@ void loop()
 for(int i=0;i<8;i++){
   Serial.println(stmp[i]);
 }
-  CAN0.sendMsgBuf(0x10, 0, 8, stmp);  
+  CAN0.sendMsgBuf(0x00, 0, 8, stmp);  
   delay(100);                       // send data per 100ms
 }
 

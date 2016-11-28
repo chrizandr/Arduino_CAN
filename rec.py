@@ -16,7 +16,7 @@ def getImage(string):
 	return img
 			
 
-ser = serial.Serial("/dev/ttyACM0",115200)
+ser = serial.Serial("/dev/ttyACM2",115200)
 byte = list()
 while(True):
 	line = ser.readline()

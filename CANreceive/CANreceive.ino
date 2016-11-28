@@ -14,7 +14,7 @@ void setup()
   Serial.begin(115200);
   CAN0.begin(CAN_125KBPS,MCP_8MHz);                       // init can bus : baudrate = 500k 
   pinMode(2, INPUT);                            // Setting pin 2 for /INT input
-  Serial.println("MCP2515 Library Receive Example...");
+  
 }
 int count = 0;
 byte pixels[1024];
@@ -34,8 +34,9 @@ void readInput(){
       {
         CAN0.readMsgBuf(&len, rxBuf);              // Read data: len = data length, buf = data byte(s)
         rxId = CAN0.getCanId();                    // Get message ID
-  //      Serial.println(rxId, HEX);
+  //Serial.println(rxId, HEX);
   //      Serial.println(len);
+        if(rxId==0x10){
         for(int i = 0; i<len; i++)                // Print each byte of the data
         {
           pixels[count] = rxBuf[i];
@@ -44,6 +45,8 @@ void readInput(){
           count ++;
         }
         Serial.println();
+        }
+        
       }
   }
 }
